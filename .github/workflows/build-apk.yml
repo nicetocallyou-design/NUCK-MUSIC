@@ -30,8 +30,7 @@ jobs:
         uses: android-actions/setup-android@v4
 
       - name: Install Android SDK
-        run: sdkmanager "platforms;android-36" "build-tools;36.0.0"
-
+        run: sdkmanager "platforms;android-37" "build-tools;36.0.0"
       - name: Setup Gradle
         uses: gradle/actions/setup-gradle@v6
         with:
@@ -54,6 +53,7 @@ jobs:
 
           app = Path("MuseMusic/app/build.gradle.kts")
           content = app.read_text()
+          content = content.replace("compileSdk = 36", "compileSdk = 37")
           content = content.replace(
               '    id("org.jetbrains.kotlin.android")\n', ''
           )
