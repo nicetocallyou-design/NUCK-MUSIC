@@ -36,7 +36,11 @@ jobs:
         uses: gradle/actions/setup-gradle@v6
         with:
           gradle-version: '9.5.0'
-
+      - name: Extract MUSE MUSIC project
+        run: |
+          unzip -q MUSE_MUSIC_Project.zip
+          echo "=== STRUKTUR FILE ==="
+          find . -name "build.gradle.kts" -o -name "settings.gradle.kts"
       - name: Fix AGP 9 Kotlin configuration
         run: |
           python3 - <<'PY'
