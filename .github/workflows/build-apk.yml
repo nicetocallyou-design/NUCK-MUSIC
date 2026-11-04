@@ -37,10 +37,37 @@ jobs:
         with:
           gradle-version: '9.5.0'
 
-      - name: Extract MUSE MUSIC project
+      - name: Fix AGP 9 Kotlin configuration
         run: |
-          unzip -q MUSE_MUSIC_Project.zip
-          ls -la MuseMusic
+          python3 - <<'PY'
+          from pathlib import Path
+
+          root = Path("MuseMusic/build.gradle.kts")
+          root.write_text("\n".join(
+              line for line in root.read_text().splitlines()
+              if 'id("org.jetbrains.kotlin.android")' not in line
+          ) + "\n")
+
+          app = Path("MuseMusic/app/build.gradle.kts")
+          content = app.read_text()
+          content = content.replace(
+              '    id("org.jetbrains.kotlin.android")\n', ''
+          )
+          content = content.replace(
+              '    kotlinOptions {\n        jvmTarget = "17"\n    }\n', ''
+          )
+          content = content.replace(
+              'android {\n',
+              'kotlin {\n'
+              '    compilerOptions {\n'
+              '        jvmTarget.set(org.jetbrains.kotlin.gradle.dsl.JvmTarget.JVM_17)\n'
+              '    }\n'
+              '}\n\nandroid {\n',
+              1
+          )
+          app.write_text(content)
+          PY
+
 
       - name: Build Debug APK
         working-directory: MuseMusic
